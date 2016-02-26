@@ -1,3 +1,39 @@
+" ===== Declare Dependencies To Vundle =====
+" Vundle needs to be before everything else, IDK why.
+" Plugin configuration is at the bottom of the file
+"
+" :VundleInstall        - Installs any missing pulugins
+" :VundleClean          - Remove unused plugins
+" :VundleSearch ZoomWin - searches vimscripts for ZoomWin
+
+set nocompatible                  " Behave more usefully at the expense of backwards compatibility (this line comes first b/c it alters how the others work)
+filetype off                      " Don't run filetype callbacks while Vundle does its thing
+set rtp+=~/.vim/bundle/Vundle.vim " Set the runtime path to include Vundle
+call vundle#begin()               " Initialize Vundle
+
+" Useful
+Plugin 'https://github.com/gmarik/Vundle.vim'              " Let Vundle manage itself
+Plugin 'https://github.com/scrooloose/nerdtree'            " Tree Display for the file system
+Plugin 'https://github.com/Shougo/vimproc.vim'             " Runs tasks Asynchronously, it's a dependency of Unite.vim
+Plugin 'https://github.com/Shougo/unite.vim'               " Searches through lists of things (files, buffers, etc)
+Plugin 'https://github.com/tpope/vim-commentary'           " Easily comment/uncomment code
+Plugin 'https://github.com/tpope/vim-endwise'              " Automatically inserts `end` for you. Convenient, works well, stays out of the way otherwise
+Plugin 'https://github.com/tpope/vim-fugitive'             " Git integration... I should learn this better
+Plugin 'https://github.com/bling/vim-airline'              " Status bar at the bottom of the screen
+Plugin 'https://github.com/tpope/vim-repeat'               " Uhm, a dep of something, it lets you repeat non-atomic instructions with the dot. Unfortunately, too minimal, so not easy for me to use (I wish it would take over vim's shitty macro system)
+Plugin 'https://github.com/tpope/vim-surround'             " Better support for working with things that 'surround' text such as quotes and parens
+
+" Language Support
+Plugin 'https://github.com/vim-ruby/vim-ruby'              " Ruby    - Pretty fkn legit (eg it's generally $LOAD_PATH aware, it's got some really awesome text objects)
+Plugin 'https://github.com/pangloss/vim-javascript'        " JavaScript     - The humans have turned this language into something to respect
+Plugin 'https://github.com/tpope/vim-markdown'             " Markdown - A plain text format for barely structured documents
+Plugin 'https://github.com/dag/vim-fish'                   " Fish     - alternate shell
+
+" Colorschemes (syntax highlighting, aka themes)
+Plugin 'https://github.com/w0ng/vim-hybrid'
+
+call vundle#end()            " required
+
 "" ===== Smallest reasonable configuration =====
 set nocompatible                " Behave more usefully at the expense of backwards compatibility (this line comes first b/c it alters how the others work)
 set encoding=utf-8              " Format of the text in our files (prob not necessary, but should prevent weird errors)
@@ -129,34 +165,33 @@ noremap  <Down> <NOP>
 noremap  <Left> <NOP>
 noremap  <Right> <NOP>
 
-"" =====  Tell vim which files are Ruby files  =====
-" Stolen from: https://github.com/vim-ruby/vim-ruby/blob/72f8b21856bac46b7b1a19194f5a3aa1006346bb/ftdetect/ruby.vim
-function! s:setf(filetype) abort
-  if &filetype !=# a:filetype
-    let &filetype = a:filetype
-  endif
-endfunction
-au BufNewFile,BufRead *.rb,*.rbw,*.gemspec	        call s:setf('ruby')
-au BufNewFile,BufRead *.builder,*.rxml,*.rjs,*.ruby call s:setf('ruby')
-au BufNewFile,BufRead [rR]akefile,*.rake	          call s:setf('ruby')
-au BufNewFile,BufRead [rR]antfile,*.rant	          call s:setf('ruby')
-au BufNewFile,BufRead .irbrc,irbrc		              call s:setf('ruby')
-au BufNewFile,BufRead .pryrc			                  call s:setf('ruby')
-au BufNewFile,BufRead *.ru			                    call s:setf('ruby')
-au BufNewFile,BufRead Capfile,*.cap 		            call s:setf('ruby')
-au BufNewFile,BufRead Gemfile			                  call s:setf('ruby')
-au BufNewFile,BufRead Guardfile,.Guardfile	        call s:setf('ruby')
-au BufNewFile,BufRead Cheffile			                call s:setf('ruby')
-au BufNewFile,BufRead Berksfile			                call s:setf('ruby')
-au BufNewFile,BufRead [vV]agrantfile		            call s:setf('ruby')
-au BufNewFile,BufRead .autotest			                call s:setf('ruby')
-au BufNewFile,BufRead *.erb,*.rhtml		              call s:setf('eruby')
-au BufNewFile,BufRead [tT]horfile,*.thor	          call s:setf('ruby')
-au BufNewFile,BufRead *.rabl			                  call s:setf('ruby')
-au BufNewFile,BufRead *.jbuilder		                call s:setf('ruby')
-au BufNewFile,BufRead Puppetfile		                call s:setf('ruby')
-au BufNewFile,BufRead [Bb]uildfile		              call s:setf('ruby')
-au BufNewFile,BufRead Appraisals		                call s:setf('ruby')
-au BufNewFile,BufRead Podfile,*.podspec		          call s:setf('ruby')
-au BufNewFile,BufRead [rR]outefile		              call s:setf('ruby')
-au BufNewFile,BufRead .simplecov		                call s:setf('ruby')
+
+" ===== Airline =====
+set laststatus=2                                        " Always show the statusline
+let g:airline#extensions#disable_rtp_load = 1           " don't autoload extensions
+let g:airline_powerline_fonts             = 0           " no fancy separator charactors
+let g:airline_left_sep                    = ''          " no fancy separator on LHS
+let g:airline_right_sep                   = ''          " no fancy separator on RHS
+let g:airline#extensions#branch#enabled   = 0           " don't show git branch
+let g:airline_detect_modified             = 1           " marks when the file has changed
+let g:airline_detect_paste                = 1           " enable paste detection (set paste) ie I'm not typing, I'm pasting, dammit, vim!
+let g:airline_detect_iminsert             = 1           " I have no idea
+let g:airline_inactive_collapse           = 1           " inactive windows should have the left section collapsed to only the filename of that buffer.
+let g:airline_section_y                   = ''          " turn off file encoding
+let g:airline_theme                       = 'bubblegum' " https://github.com/bling/vim-airline/wiki/Screenshots#bubblegum
+
+
+" ===== NERDTree =====
+
+" Open a NERDTree automatically when vim starts up if no files were specified
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+" Close vim if NERDTree is the only open buffer
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+
+" ===== Gruvbox for the Colorscheme =====
+" Now switch to this custom colorscheme (dark gray)
+colorscheme hybrid " slightly brighter than 'hybrid' theme
+
